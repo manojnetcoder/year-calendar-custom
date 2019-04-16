@@ -38,19 +38,38 @@ export class AppComponent {
       actions: this.actions
     },
     {
-      start: new Date(),
-      end: new Date(),
+      start: new Date(2019,3,22),
+      end: new Date(2019,3,23),
       title: 'title event 2',
       color: this.colors.yellow,
+      actions: this.actions
+    },
+    {
+      start: new Date(2019,5,10),
+      end: new Date(2019,5,12),
+      title: 'title event 3',
+      color: this.colors.blue,
       actions: this.actions
     }
   ]
   viewDate: Date = new Date();
-  themecolor: any = '#0a5ab3'
+  themecolor: any = '#0a5ab3';
+  enableRangeSelection: Boolean = true;
+  enableContextMenu: Boolean = true;
+  //selected: {startDate: (new Date(2019, 3, 10)), endDate: (new Date(2019, 3, 15)) };
+
   actionClicked(event) {
     console.log(event);
   }
   eventClicked(event) {
-    console.log(event)
+    console.log(event);
   }
+  selectRange() {
+    debugger;
+    console.log(event);
+  }
+  selectRangeFn() {
+    debugger;
+  }
+
 }

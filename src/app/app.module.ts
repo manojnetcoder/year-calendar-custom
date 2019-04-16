@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA, } from '@angular/core';
 import { AngularCalendarYearViewComponent } from './angular-calendar-year-view/angular-calendar-year-view.component';
 import { AppComponent } from './app.component';
-import {PopoverModule} from 'ngx-bootstrap/popover'
+import {PopoverModule} from 'ngx-bootstrap/popover';
 @NgModule({
   declarations: [
     AppComponent,

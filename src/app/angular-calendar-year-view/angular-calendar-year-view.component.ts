@@ -1,13 +1,15 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostBinding } from "@angular/core";
 import * as cloneDeep from "lodash/cloneDeep";
 import { DomSanitizer } from '@angular/platform-browser';
+import { DaterangePickerComponent } from 'ng2-daterangepicker';
 const clone: cloneDeep = (<any>cloneDeep).default || cloneDeep
 @Component({
   selector: 'angular-calendar-year-view',
   templateUrl: './angular-calendar-year-view.component.html',
   styleUrls: ['./angular-calendar-year-view.component.scss']
 })
-export class AngularCalendarYearViewComponent implements OnInit {
+export class AngularCalendarYearViewComponent implements OnInit {    
+   
   @HostBinding('style')
   get style() {
     return this.sanitizer.bypassSecurityTrustStyle(
@@ -15,36 +17,50 @@ export class AngularCalendarYearViewComponent implements OnInit {
     );
   }
   @Input()
-  themecolor:any='#ff0000'
+  themecolor: any = '#ff0000'
   @Input()
   events = [];
 
   @Input()
   viewDate: Date = new Date();
 
+  @Input()
+  enableRangeSelection: Boolean = true;
+
+  @Input()
+  enableContextMenu: Boolean = true;
+
   @Output()
   eventClicked = new EventEmitter<any>();
-  
+
   @Output()
   actionClicked = new EventEmitter<any>();
 
+  @Output()
+  selectRange = new EventEmitter<any>();
+
   loader: any = false;
   days: any = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  daysFull: any = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  months: any = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   dayindex: any;
   daydetails: any = {};
   year: any = new Date().getFullYear();
+  month: any = new Date().getMonth();
   calendar: any = [];
   spinner: any = true;
-  constructor(              public sanitizer:DomSanitizer,
+  calendarMode: string = "year";
+  constructor(public sanitizer: DomSanitizer
 
   ) { }
   ngOnInit() {
-    this.initCalendar(this.viewDate);
+    this.initYearCalendar(this.viewDate);
+    //this.selectRange.emit({ event: event });
   }
   ngOnChanges() {
-    this.initCalendar(this.viewDate);
+    this.initYearCalendar(this.viewDate);
   }
-  initCalendar(date) {
+  initYearCalendar(date) {
     this.year = date.getFullYear();
     this.calendar = [];
     this.spinner = true;
@@ -57,7 +73,23 @@ export class AngularCalendarYearViewComponent implements OnInit {
     let self = this;
     setTimeout(() => {
       self.spinner = false;
-    }, 2000);
+    }, 1000);
+  }
+  initMonthCalendar(date) {
+    this.viewDate = date;
+    this.year = date.getFullYear();
+    this.month = date.getMonth();
+    this.calendar = [];
+    this.spinner = true;
+    this.calendar = [];
+    this.calendar.push({
+      date: new Date(this.year, this.month + 1, 0),
+      days: this.generateCalendar(this.month + 1, this.year)
+    });
+    let self = this;
+    setTimeout(() => {
+      self.spinner = false;
+    }, 1000);
   }
   generateCalendar(month, year) {
     let monthList = [];
@@ -91,7 +123,6 @@ export class AngularCalendarYearViewComponent implements OnInit {
         day++;
       }
     }
-
     return monthList;
   }
   getNbWeeks(month, year) {
@@ -101,8 +132,8 @@ export class AngularCalendarYearViewComponent implements OnInit {
     return (nbdaysMonth + dayone + (6 - lastday)) / 7;
   }
   getTodayEvents(day, month) {
-    this.daydetails = {}
-
+    month = (month === 0 ? this.month : month);
+    this.daydetails = {};
     if (this.events.length > 0) {
       this.loader = true;
       this.daydetails = clone(day);
@@ -146,9 +177,53 @@ export class AngularCalendarYearViewComponent implements OnInit {
     this.eventClicked.emit(event);
   }
   refresh(date) {
-    this.initCalendar(date);
+    this.initYearCalendar(date);
   }
-  actionClickedFn(action,event?){
-       this.actionClicked.emit({action:action,event:event})
+  actionClickedFn(action, event?) {
+    this.actionClicked.emit({ action: action, event: event });
   }
+  selectRangeFn(event) {
+    debugger;
+    this.selectRange.emit({ event: event });
+  }
+
+  // onActionClicked = function(action,event?){
+  //   console.log(action);
+  //   console.log(event);
+  //      this.actionClicked.emit({action:action,event:event})
+  // }
+  // onEventClicked = function(event){
+  //   debugger;
+  //   console.log(event);
+  //   this.eventClicked.emit(event);
+  // }
+  fnPrev() {
+    (this.calendarMode === 'year' ? (this.year = this.year - 1) : (this.month = this.month - 1));
+    this.fnResetCalendar();
+  }
+
+  fnNext() {
+    (this.calendarMode === 'year' ? (this.year = this.year + 1) : (this.month = this.month + 1));
+    this.fnResetCalendar();
+  }
+
+  fnResetCalendar() {
+    (this.calendarMode === 'year' ? this.initYearCalendar(new Date(this.year, 1, 0)) : this.initMonthCalendar(new Date(this.year, this.month, 1)));
+  }
+
+  calendarView(mode) {
+    this.calendarMode = mode;
+    this.year = new Date().getFullYear();
+    this.month = new Date().getMonth();
+    this.fnResetCalendar();
+  }
+
+  selectedDate(value: any, datepicker?: any) {
+    // this is the date the iser selected
+    console.log(value);
+debugger;
+}
+calendarApplied(event){
+  debugger;
+}
 }

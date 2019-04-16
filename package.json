@@ -23,6 +23,7 @@
     "angular2-moment": "^1.9.0",
     "core-js": "^2.5.4",
     "moment": "^2.23.0",
+    "ng2-daterangepicker": "^2.0.12",
     "ngx-bootstrap": "^3.1.4",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
